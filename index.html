@@ -3,13 +3,19 @@
 <link>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css"></link>
-    <script src="app.js" charset="utf-8"></script>
+    <script src="game.js" charset="utf-8"></script>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Game of Life</h1>
-        <canvas></canvas>   
-        <button>Start</button>     
+        <h1 class="title">Game of Life</h1>         
+        <div class="grid-container"></div>        
+        <div id="generation">Generation: <span>0</span></div>
+        <div class="btn-container">
+            <button id="start-stop">Start</button>
+            <button id="step">Step</button>
+            <button id="clear">Clear</button>
+            <button id="random">Random</button>
+        </div>
     </div>
 </body>
 </html>
