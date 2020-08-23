@@ -1,47 +1,70 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Global Variables
-  let rows = 30;
-  let cols = 30;
-  // State Variables
+  // Global State Variables
+  let size = 50;
+  let rows = size;
+  let cols = size;
   let running = false;
   let generation = 0;
+  let alive; // TODO display number of alive cells
   let update; // setTimeout(cb, speed)
   let speed = 500; // ms per generation
 
-  // Button Event Listeners
+  // Initalize Button Event Listeners
   const startBtn = document.getElementById("start-stop");
   startBtn.addEventListener("click", startBtnClick);
   const stepBtn = document.getElementById("step");
   stepBtn.addEventListener("click", stepBtnClick);
   const randomBtn = document.getElementById("random");
   randomBtn.addEventListener("click", randomBtnClick);
-  // TODO add clear btn
+  const slowerBtn = document.getElementById("slower");
+  slowerBtn.addEventListener("click", slowerBtnClick);
+  const fasterBtn = document.getElementById("faster");
+  fasterBtn.addEventListener("click", fasterBtnClick);
+  const resetBtn = document.getElementById("reset");
+  resetBtn.addEventListener("click", resetBtnClick);
+  const smallerBtn = document.getElementById("smaller");
+  smallerBtn.addEventListener("click", smallerBtnClick);
+  const biggerBtn = document.getElementById("bigger");
+  biggerBtn.addEventListener("click", biggerBtnClick);
+
+  let grid = [];
 
   // Create 2d Array to store grid [[col,row],[...]..]
-  let grid = new Array(cols);
-  for (let i = 0; i < cols; i++) {
-    grid[i] = new Array(rows);
-  }
-  // set all values in grid array to 0
-  for (let col = 0; col < cols; col++) {
-    for (let row = 0; row < rows; row++) {
-      grid[col][row] = 0;
+  function buildArray() {
+    rows = size;
+    cols = size;
+    console.log(size, cols, rows, grid);
+    grid = new Array(cols);
+    for (let i = 0; i < cols; i++) {
+      grid[i] = new Array(rows).fill(0);
     }
+    console.log(grid);
   }
-  // Initialize Empty Grid with divs with class 'dead' and click event handler
-  // that switchs values from 0 <--> 1 and class from 'dead' <--> 'alive'
-  createGrid();
 
+  function clearArray() {
+    console.log(grid);
+
+    grid = [];
+    console.log(grid);
+  }
+
+  // Initialize col x row size grid
+  createGrid();
   function createGrid() {
+    buildArray();
+    generation = 0;
+    document.querySelector("span").innerHTML = generation;
     const gridContainer = document.querySelector(".grid-container");
-    // loop through each column and row
+    gridContainer.innerHTML = "";
+    // loop through each column
     for (let col = 0; col < cols; col++) {
-      // create new cell div for each column
+      // create new container div for each column
       let divRow = document.createElement("div");
       divRow.classList.add("div-row");
+      // loop through each row
       for (let row = 0; row < rows; row++) {
-        // create id for cell with col-row acting liky [x][y] coordinates in the grid
         const cell = document.createElement("div");
+        // create id for cell with col-row acting liky [x][y] coordinates on the grid
         cell.setAttribute("id", row + "-" + col);
         cell.classList.add("dead");
         cell.addEventListener("click", (evt) => cellClick(cell));
@@ -116,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (running) stop();
     for (let col = 0; col < cols; col++) {
       for (let row = 0; row < rows; row++) {
-        if (Math.random() + 0.3 >= 1) {
+        if (Math.random() + 0.1 > 1) {
           grid[col][row] = 1;
           document
             .getElementById(col + "-" + row)
@@ -126,50 +149,99 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function slowerBtnClick() {
+    if (speed < 2000) speed = Math.floor(speed / 0.5);
+    console.log(speed);
+  }
+  function fasterBtnClick() {
+    if (speed > 10) speed = Math.floor(speed / 1.5);
+    console.log(speed);
+  }
+  function resetBtnClick() {
+    if (running) stop();
+    const aliveCells = document.getElementsByClassName("alive");
+    const cellsToUpdate = [];
+    for (let i = 0; i < cellsToUpdate.length; i++) {
+      cellsToUpdate.push(aliveCells[i]);
+    }
+    for (var i = 0; i < cellsToUpdate.length; i++) {
+      cellsToUpdate[i].setAttribute("class", "dead");
+    }
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < cols; j++) {
+        grid[i][j] = 0;
+      }
+    }
+    buildArray();
+    createGrid();
+  }
+
+  function smallerBtnClick() {
+    if (size >= 20) size -= 10;
+    stop();
+    clearArray();
+    buildArray();
+    createGrid();
+  }
+  function biggerBtnClick() {
+    if (size <= 90) size += 10;
+    stop();
+    clearArray();
+    buildArray();
+    createGrid();
+    console.log(grid);
+    console.log(size);
+  }
+
   function nextGen() {
-    // make exact copy of current grid
+    // make exact copy of current grid (2d array[][])
     const nextGrid = grid.map((arr) => [...arr]);
     // loop over every cell in grid
     for (let col = 0; col < cols; col++) {
       for (let row = 0; row < rows; row++) {
-        // count number of neighbors for each cell
+        const cell = grid[col][row];
+        // start count number of neighbors for each cell
         let neighbors = 0;
-        // loop through a 9x9 grid around each cell
+        // loop through a 9x9 grid around each cell (-1, 0, 1)
+        //
+        // -1,-1 | 0,-1 | 1,-1
+        // -1, 0 | 0, 0 | 1, 0
+        // -1, 1 | 0, 1 | 1, 1
+        //
         for (let x = -1; x < 2; x++) {
           for (let y = -1; y < 2; y++) {
-            // set variables for current x,y positions on 9x9 grid
-            const curCell = grid[col][row];
+            // set variables for current cell and the x,y positions checking on 9x9 grid
             const curX = col + x;
             const curY = row + y;
             if (x == 0 && y == 0) continue;
-            // exclude all edges
+            // if not out of bounds of the overall grid (excluding edges as dead zones)
             if (curX >= 0 && curX < cols && curY >= 0 && curY < rows) {
-              // count current neighbors if not an edge
+              // check and count current neighbor
               if (grid[curX][curY]) neighbors++;
-            }
-            // end count
+            } // end neighbor count
 
-            // apply game rules to each cell to nextGrid (empty 2d array of all 0's)
+            // apply game rules to each cell and modify nextGrid (copy grid)
             // if cell is alive and neighbors < 2 or > 3 the cell dies
-            if ((curCell == 1 && neighbors < 2) || neighbors > 3)
+            if ((cell == 1 && neighbors < 2) || neighbors > 3)
               nextGrid[col][row] = 0;
             // if cell is alive and neighbors == 2 or == 3 the cell stays alive
-            if ((curCell == 1 && neighbors == 2) || neighbors == 3)
+            if ((cell == 1 && neighbors == 2) || neighbors == 3)
               nextGrid[col][row] = 1;
             // if cell is dead and neighbors == 3 --> cell becomes alive next gen
-            else if (curCell == 0 && neighbors == 3) nextGrid[col][row] = 1;
+            else if (cell == 0 && neighbors == 3) nextGrid[col][row] = 1;
             // otherwise cell stays dead - do nothing
           }
         }
       }
-    }
-    // update generation number HTML on page
+    } // nextGrid is ready to go
+
+    // update HTML <span> with current generation
     document.querySelector("span").innerHTML = generation;
-    // copy nextGrid to grid, and reset nextGrid to all 0 values
+    // Final step is to take nextGrid and copy it back
+    //  to grid and update the cell classes
     for (let col = 0; col < cols; col++) {
       for (let row = 0; row < rows; row++) {
         grid[col][row] = nextGrid[col][row];
-        nextGrid[col][row] = 0;
         let cell = document.getElementById(col + "-" + row);
         if (grid[col][row] == 1) {
           cell.setAttribute("class", "alive");

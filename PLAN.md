@@ -39,6 +39,8 @@ Step 5 - Add buttons to start/stop game
 
 TODO:
 
+about the game section
+
 add buttons:
 slower
 faster
