@@ -1,20 +1,23 @@
 .title {
-  margin: 20px auto;
+  margin: 0 auto 15px auto;
   text-align: center;
 }
 
 .container {
-  height: 800px;
-  width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  height: 80rem;
+  width: 70rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .grid-container {
-  height: 500px;
-  width: 500px;
+  height: 50%;
+  width: 75%;
   display: flex;
-  flex-wrap: nowrap;
   flex-direction: column;
-  background-color: grey;
   margin: 0 auto;
 }
 
@@ -22,6 +25,19 @@
   display: flex;
   height: 100%;
   width: 100%;
+  border-radius: 0.5px;
+}
+
+@media all and (max-width: 615px) {
+  .title {
+    text-align: left;
+    margin: 10px;
+  }
+  .grid-container {
+    height: 350px;
+    width: 350px;
+    margin: 0;
+  }
 }
 
 .dead {
@@ -34,31 +50,63 @@
   background-color: black;
 }
 
-#generation {
+.display-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.display-container div {
+  display: inline-block;
+  margin: 15px;
+}
+
+span {
   margin: 25px;
   text-align: center;
   font-weight: bold;
   font-size: larger;
 }
 
-span {
+#generation {
   color: red;
 }
 
+#alive {
+  color: blue;
+}
+
 .btn-container {
-  margin: 25px auto;
+  width: 70%;
+  margin: 15px auto;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-evenly;
 }
 
 button {
   display: inline-block;
-  margin: 0 20px;
-  width: 12.5%;
+  margin: 5px 5px;
+  width: 17.5%;
+  white-space: nowrap;
   height: 30px;
   font-weight: bold;
 }
 
 button:hover {
   cursor: pointer;
+}
+
+.about-container {
+  margin-top: 25px;
+}
+
+li {
+  margin: 10px;
+  font-size: 1.25rem;
+  text-align: justify;
+}
+
+.footer {
+  font-size: smaller;
 }
