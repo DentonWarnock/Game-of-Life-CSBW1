@@ -7,7 +7,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Game of Life</h1>         
+        <h1 class="title">Conway’s Game of Life - 2D Cellular Automation</h1>         
         <div class="grid-container"></div>        
         <div id="generation">Generation: <span>0</span></div>
         <div class="btn-container">
@@ -15,11 +15,32 @@
             <button id="step">Step</button>
             <button id="slower">Slower</button>
             <button id="faster">Faster</button>
-            <button id="reset">Reset</button>            
+            <button id="reset">Clear Grid</button>            
             <button id="random">Random +</button>
             <button id="smaller">Smaller</button>
             <button id="bigger">Bigger</button>
+            <button id="grid">Toggle Lines</button>
+            <section class="about-container">
+                <h3>About The Game of Life</h3>
+                    <ul>
+                        <li>Click on any number of cells to make them come alive, or press the add 'Random' button</li>
+                        <li>Next click the start button to start the game of life which uses the following rules:</li>
+                        <ol>
+                            <li>Any live cell with fewer than two live neighbours dies, as if by underpopulation.</li>
+                            <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+                            <li>Any live cell with more than three live neighbours dies, as if by overpopulation.</li>
+                            <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+                        </ol>
+                        <li>The step button will move you forward one generation at a time</li>
+                        <li>Use the Slower and Faster buttons to change the game speed</li>
+                        <li>Use the Smaller and Bigger buttons to change the number of cells on the grid</li>
+                    </ul>
+            </section>
+            
         </div>
+        <section>
+            <p class="footer"><a href="www.dentonwarnock.com">2020 Denton Warnock</a></p>
+        </section>
     </div>
 </body>
 </html>

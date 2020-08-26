@@ -1,21 +1,21 @@
 .title {
-  margin: 10px auto;
+  margin: 0 auto 15px auto;
   text-align: center;
 }
 
 .container {
   margin: 0 auto;
   text-align: center;
-  height: 100vh;
-  width: 100vh;
+  height: 80rem;
+  width: 70rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .grid-container {
-  height: 60%;
-  width: 85%;
+  height: 50%;
+  width: 75%;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
@@ -61,7 +61,8 @@ span {
 }
 
 .btn-container {
-  margin: 25px 30px;
+  width: 70%;
+  margin: 15px auto;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
@@ -78,4 +79,18 @@ button {
 
 button:hover {
   cursor: pointer;
+}
+
+.about-container {
+  margin-top: 25px;
+}
+
+li {
+  margin: 10px;
+  font-size: 1.25rem;
+  text-align: justify;
+}
+
+.footer {
+  font-size: smaller;
 }

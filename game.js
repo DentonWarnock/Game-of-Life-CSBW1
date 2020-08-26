@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let alive; // TODO display number of alive cells
   let update; // setTimeout(cb, speed)
   let speed = 500; // ms per generation
+  let showGrid = true;
 
   // Initalize Button Event Listeners
   const startBtn = document.getElementById("start-stop");
@@ -26,6 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
   smallerBtn.addEventListener("click", smallerBtnClick);
   const biggerBtn = document.getElementById("bigger");
   biggerBtn.addEventListener("click", biggerBtnClick);
+  const gridBtn = document.getElementById("grid");
+  gridBtn.addEventListener("click", gridBtnClick);
 
   let grid = [];
 
@@ -153,10 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (speed < 2000) speed = Math.floor(speed / 0.5);
     console.log(speed);
   }
+
   function fasterBtnClick() {
     if (speed > 10) speed = Math.floor(speed / 1.5);
     console.log(speed);
   }
+
   function resetBtnClick() {
     if (running) stop();
     const aliveCells = document.getElementsByClassName("alive");
@@ -174,6 +179,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     buildArray();
     createGrid();
+    if (showGrid == false) {
+      showGrid = true;
+      gridBtnClick();
+    }
+    console.log(showGrid);
   }
 
   function smallerBtnClick() {
@@ -189,8 +199,21 @@ document.addEventListener("DOMContentLoaded", () => {
     clearArray();
     buildArray();
     createGrid();
-    console.log(grid);
-    console.log(size);
+  }
+
+  function gridBtnClick(evt) {
+    for (let col = 0; col < cols; col++) {
+      for (let row = 0; row < rows; row++) {
+        const cell = document.getElementById(row + "-" + col);
+        if (showGrid) {
+          cell.style.border = "0";
+        } else {
+          cell.style.border = "0.2px solid black";
+        }
+      }
+    }
+    console.log(showGrid);
+    showGrid = !showGrid;
   }
 
   function nextGen() {
