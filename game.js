@@ -1,13 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Global State Variables
-  let size = 50;
+  let size = 30;
   let rows = size;
   let cols = size;
   let running = false;
   let generation = 0;
-  let alive; // TODO display number of alive cells
+  let alive = 0;
   let update; // setTimeout(cb, speed)
   let speed = 500; // ms per generation
+  let speedDisplay = 5;
   let showGrid = true;
 
   // Initalize Button Event Listeners
@@ -30,25 +31,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const gridBtn = document.getElementById("grid");
   gridBtn.addEventListener("click", gridBtnClick);
 
+  // update HTML with current numbers
+  function updateGen() {
+    document.getElementById("generation").innerHTML = generation;
+  }
+  function updateAlive() {
+    // update HTML with current number of alive cells
+    document.getElementById("alive").innerHTML = alive;
+  }
+  function updateSpeed() {
+    document.getElementById("speed").innerHTML = speedDisplay;
+  }
+  function updateSize() {
+    document.getElementById("size").innerHTML = size + "x" + size;
+  }
+  // initialize empty array to store our grid 2d array we create below
   let grid = [];
 
+  function clearArray() {
+    grid = [];
+  }
   // Create 2d Array to store grid [[col,row],[...]..]
   function buildArray() {
     rows = size;
     cols = size;
-    console.log(size, cols, rows, grid);
     grid = new Array(cols);
     for (let i = 0; i < cols; i++) {
       grid[i] = new Array(rows).fill(0);
     }
-    console.log(grid);
-  }
-
-  function clearArray() {
-    console.log(grid);
-
-    grid = [];
-    console.log(grid);
   }
 
   // Initialize col x row size grid
@@ -90,10 +100,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (cell.classList.contains("dead")) {
       cell.setAttribute("class", "alive");
       grid[col][row] = 1;
+      alive++;
+      updateAlive();
     } else {
       // if alive make dead
       cell.setAttribute("class", "dead");
       grid[col][row] = 0;
+      alive--;
+      updateAlive();
     }
   }
 
@@ -147,19 +161,30 @@ document.addEventListener("DOMContentLoaded", () => {
           document
             .getElementById(col + "-" + row)
             .setAttribute("class", "alive");
+          alive++;
         }
       }
     }
   }
 
   function slowerBtnClick() {
-    if (speed < 2000) speed = Math.floor(speed / 0.5);
-    console.log(speed);
+    if (speed < 3500) {
+      speed = Math.floor(speed / 0.75);
+    }
+    if (speedDisplay > 1) {
+      speedDisplay--;
+      updateSpeed();
+    }
   }
 
   function fasterBtnClick() {
-    if (speed > 10) speed = Math.floor(speed / 1.5);
-    console.log(speed);
+    if (speed > 50) {
+      speed = Math.floor(speed / 1.5);
+    }
+    if (speedDisplay < 10) {
+      speedDisplay++;
+      updateSpeed();
+    }
   }
 
   function resetBtnClick() {
@@ -183,22 +208,29 @@ document.addEventListener("DOMContentLoaded", () => {
       showGrid = true;
       gridBtnClick();
     }
-    console.log(showGrid);
+    alive = 0;
+    updateAlive();
   }
 
   function smallerBtnClick() {
-    if (size >= 20) size -= 10;
-    stop();
-    clearArray();
-    buildArray();
-    createGrid();
+    if (size >= 20) {
+      size -= 10;
+      stop();
+      clearArray();
+      buildArray();
+      createGrid();
+      updateSize();
+    }
   }
   function biggerBtnClick() {
-    if (size <= 90) size += 10;
-    stop();
-    clearArray();
-    buildArray();
-    createGrid();
+    if (size <= 90) {
+      size += 10;
+      stop();
+      clearArray();
+      buildArray();
+      createGrid();
+      updateSize();
+    }
   }
 
   function gridBtnClick(evt) {
@@ -208,15 +240,22 @@ document.addEventListener("DOMContentLoaded", () => {
         if (showGrid) {
           cell.style.border = "0";
         } else {
-          cell.style.border = "0.2px solid black";
+          cell.style.border = "1.5px solid black";
         }
       }
     }
-    console.log(showGrid);
     showGrid = !showGrid;
+    if (showGrid) {
+      document.querySelector(".grid-container").style.border = "0";
+    } else {
+      document.querySelector(".grid-container").style.border =
+        "0.5px solid black";
+    }
   }
 
   function nextGen() {
+    // reset number of alive cells to zero
+    alive = 0;
     // make exact copy of current grid (2d array[][])
     const nextGrid = grid.map((arr) => [...arr]);
     // loop over every cell in grid
@@ -258,8 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } // nextGrid is ready to go
 
-    // update HTML <span> with current generation
-    document.querySelector("span").innerHTML = generation;
     // Final step is to take nextGrid and copy it back
     //  to grid and update the cell classes
     for (let col = 0; col < cols; col++) {
@@ -268,10 +305,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let cell = document.getElementById(col + "-" + row);
         if (grid[col][row] == 1) {
           cell.setAttribute("class", "alive");
+          alive++;
         } else {
           cell.setAttribute("class", "dead");
         }
       }
     }
+    // update HTML elements for generation and number of alive cells
+    updateGen();
+    updateAlive();
   }
 });
