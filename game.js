@@ -3,7 +3,7 @@ import { gliderArray, figureEightArray, colorArray } from "/presets.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // Global State Variables
-  let size = 50;
+  let size = 30;
   let rows = size;
   let cols = size;
   let running = false;
