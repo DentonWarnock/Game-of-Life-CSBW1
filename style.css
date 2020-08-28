@@ -112,7 +112,7 @@ li {
 }
 
 /* tablet view  */
-@media (max-width: 1100px) {
+@media screen and (max-width: 1100px) {
   .container {
     height: 95rem;
     width: 50rem;
@@ -133,13 +133,17 @@ li {
   }
 }
 /* mobile view  */
-@media (max-width: 855px) {
+@media screen and (max-width: 855px) {
   .container {
     height: 90%;
     width: 100%;
   }
   .div-container {
     width: 100;
+  }
+  .display-container div {
+    /* width: 70%; */
+    margin: 15px 10px 0 10px;
   }
   .title {
     margin: 10px;
