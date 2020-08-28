@@ -36,19 +36,3 @@ Step 4 - apply rules of game to cells - update the grid changes all at once(NOT 
         update the class of each cell based on the new value for CSS updates to cells.
 
 Step 5 - Add buttons to start/stop game
-
-TODO:
-
-about the game section
-
-add buttons:
-slower
-faster
-smaller grid
-bigger grid
-
-display:
-current speed
-current size
-current alive cell count
-cell colors???
