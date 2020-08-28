@@ -172,6 +172,9 @@ a:active {
     width: 100%;
     margin: 0;
   }
+  ul {
+    padding-inline-start: 0;
+  }
   ul li {
     list-style-type: none;
   }
