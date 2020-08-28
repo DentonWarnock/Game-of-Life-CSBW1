@@ -1,4 +1,10 @@
-# Game-of-Life-CSBW1
+# Welcome to the Game of Life
+
+[VIEW LIVE SITE](https://game-of-life-denton-warnock.netlify.app/)
+
+Built using Javascript, HTML, and CSS by Denton Warnock.
+
+## About the Game-of-Life
 
 Welcome to John Conway's "Game of Life"! This is a computer science
 classic from 1970, a program that simulates a _cellular automaton_

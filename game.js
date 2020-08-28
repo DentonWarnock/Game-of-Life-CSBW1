@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const colorBtn = document.getElementById("color");
   colorBtn.addEventListener("click", colorBtnClick);
 
-  // update HTML with current numbers
+  // Helper Functions to update HTML with current state info
   function updateGen() {
     document.getElementById("generation").innerHTML = generation;
   }
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
       span.style.color = "red";
     }
   }
-  // initialize empty array to store our grid 2d array we create below
+  // initialize empty array to store our 2d array for the grid
   let grid = [];
 
   function clearArray() {
@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // loop through each row
       for (let row = 0; row < rows; row++) {
         const cell = document.createElement("div");
+        // add preset pattern if selected
         if (PRESET_GLIDER) {
           if (gliderArray[col][row] == 1) {
             cell.setAttribute("id", row + "-" + col);
@@ -133,6 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // add each new cell to divRow
             divRow.appendChild(cell);
           }
+          // Normal empty grid, no preset selected
         } else {
           // create id for cell with col-row acting liky [x][y] coordinates on the grid
           cell.setAttribute("id", row + "-" + col);
@@ -216,7 +218,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (running) stop();
     for (let col = 0; col < cols; col++) {
       for (let row = 0; row < rows; row++) {
-        if (Math.random() + 0.1 > 1) {
+        if (Math.random() + 0.25 > 1) {
+          // add 25% random cells
           grid[col][row] = 1;
           document
             .getElementById(col + "-" + row)
@@ -323,16 +326,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // toggle cell color change every 5 generations
   function colorBtnClick() {
     if (displayColor) {
       displayColor = false;
     } else {
       displayColor = true;
     }
-    console.log(displayColor);
     updateColor();
   }
 
+  // calculate the next grid based on the rules of the game
   function nextGen() {
     // reset number of alive cells to zero
     alive = 0;
@@ -383,7 +387,6 @@ document.addEventListener("DOMContentLoaded", () => {
         grid[col][row] = nextGrid[col][row];
         let cell = document.getElementById(col + "-" + row);
         if (nextGrid[col][row] == 1) {
-          //   console.log(generation, colorGeneration);
           cell.setAttribute("class", "alive");
           cell.style.background = "black";
           if (displayColor) {
@@ -428,7 +431,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   }
-
   // Figure 8
   function figureBtnClick() {
     if (!running) {
