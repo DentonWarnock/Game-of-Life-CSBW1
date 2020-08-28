@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (running) return;
     // get current id and split into [[col], [row]]
     const curId = cell.id.split("-");
-    // destructure out col and row from id
+    // destructure col and row from cell id
     let [col, row] = [curId[0], curId[1]];
     // if dead make alive
     if (cell.classList.contains("dead")) {
@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
       update = setTimeout(start, speed);
     }
   }
-
+  // stop the game
   function stop() {
     running = false;
     startBtn.innerHTML = "Start";
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       displayColor = true;
     }
-    updateColor();
+    updateColor(); // html helper
   }
 
   // calculate the next grid based on the rules of the game
@@ -406,13 +406,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
-    // update HTML elements for generation and number of alive cells
+    // continue to iterate the colorArray
     if (displayColor) {
       if (generation > colorGeneration + 10) {
         colorGeneration += 5;
         if (colorGeneration > 270) colorGeneration = 0;
       }
     }
+    // update HTML elements for generation and number of alive cells
     updateGen();
     updateAlive();
   }
