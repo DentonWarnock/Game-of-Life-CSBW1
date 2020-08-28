@@ -14,9 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let speed = 500; // ms per generation
   let speedDisplay = 5;
   let showGrid = true;
-  let displayColor = false;
   let PRESET_GLIDER = false;
   let PRESET_FIGURE = false;
+  let displayColor = false;
 
   // Initalize Button Event Listeners
   const startBtn = document.getElementById("start-stop");
@@ -216,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // add random 0/1 values to all cells on grid
   function randomBtnClick() {
     if (running) stop();
+    colorGeneration = 0;
     for (let col = 0; col < cols; col++) {
       for (let row = 0; row < rows; row++) {
         if (Math.random() + 0.25 > 1) {
@@ -253,6 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // resest grid, generation, num alive
   function resetBtnClick() {
     if (running) stop();
+    colorGeneration = 0;
     const aliveCells = document.getElementsByClassName("alive");
     const cellsToUpdate = [];
     for (let i = 0; i < cellsToUpdate.length; i++) {
@@ -282,6 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
       size -= 10;
       stop();
       clearArray();
+      colorGeneration = 0;
       buildArray();
       createGrid();
       updateSize();
@@ -296,6 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
       size += 10;
       stop();
       clearArray();
+      colorGeneration = 0;
       buildArray();
       createGrid();
       updateSize();
@@ -423,6 +427,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function gliderBtnClick() {
     if (!running) {
       resetBtnClick();
+      //   displayColor = false;
+      //   updateColor();
+      colorGeneration = 3;
       PRESET_GLIDER = true;
       buildArray();
       createGrid();
@@ -436,6 +443,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function figureBtnClick() {
     if (!running) {
       resetBtnClick();
+      //   displayColor = false;
+      //   updateColor();
+      colorGeneration = 2;
       PRESET_FIGURE = true;
       buildArray();
       createGrid();
