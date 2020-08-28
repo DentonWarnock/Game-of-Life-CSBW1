@@ -83,13 +83,14 @@ span {
 
 button {
   display: inline-block;
+  border-radius: 10px;
   margin: 5px 5px;
   width: 14.5%;
   white-space: nowrap;
   height: 30px;
   font-weight: bold;
   background: white;
-  box-shadow: 1px 2px;
+  box-shadow: 1px 1.1px;
   outline: none;
 }
 
@@ -180,8 +181,8 @@ a:active {
   }
   button {
     display: inline-block;
-    margin: 5px 5px;
-    width: 42.5%;
+    margin: 5px 0px;
+    width: 45.5%;
     white-space: nowrap;
     height: 30px;
     font-weight: bold;
