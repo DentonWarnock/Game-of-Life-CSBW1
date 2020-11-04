@@ -1,4 +1,3 @@
-// Preset Grids
 import { gliderArray, figureEightArray, colorArray } from "/presets.js";
 
 document.addEventListener("DOMContentLoaded", () => {
