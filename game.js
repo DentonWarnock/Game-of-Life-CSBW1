@@ -1,175 +1,109 @@
+<<<<<<< HEAD
 import { gliderArray, figureEightArray, colorArray } from "/presets.js";
 
+=======
+>>>>>>> 7a148c30b2cfeebc1b726d69c5810c0e49aba28f
 document.addEventListener("DOMContentLoaded", () => {
-  // Global State Variables
-  let size = 30;
-  let rows = size;
-  let cols = size;
+  const container = document.querySelector(".grid");
+
+  let rows = 20;
+  let cols = 20;
+
   let running = false;
   let generation = 0;
-  let colorGeneration = 0;
-  let alive = 0;
-  let update; // setTimeout(cb, speed)
-  let speed = 500; // ms per generation
-  let speedDisplay = 5;
-  let showGrid = true;
-  let PRESET_GLIDER = false;
-  let PRESET_FIGURE = false;
-  let displayColor = false;
+  let generationDisplay = document.querySelector("span");
+  let timer;
+  let speed = 1500;
 
-  // Initalize Button Event Listeners
   const startBtn = document.getElementById("start-stop");
-  startBtn.addEventListener("click", startBtnClick);
-  const stepBtn = document.getElementById("step");
-  stepBtn.addEventListener("click", stepBtnClick);
-  const randomBtn = document.getElementById("random");
-  randomBtn.addEventListener("click", randomBtnClick);
-  const slowerBtn = document.getElementById("slower");
-  slowerBtn.addEventListener("click", slowerBtnClick);
-  const fasterBtn = document.getElementById("faster");
-  fasterBtn.addEventListener("click", fasterBtnClick);
-  const resetBtn = document.getElementById("reset");
-  resetBtn.addEventListener("click", resetBtnClick);
-  const smallerBtn = document.getElementById("smaller");
-  smallerBtn.addEventListener("click", smallerBtnClick);
-  const biggerBtn = document.getElementById("bigger");
-  biggerBtn.addEventListener("click", biggerBtnClick);
-  const gliderBtn = document.getElementById("glider");
-  gliderBtn.addEventListener("click", gliderBtnClick);
-  const figureBtn = document.getElementById("figure");
-  figureBtn.addEventListener("click", figureBtnClick);
-  const gridBtn = document.getElementById("grid");
-  gridBtn.addEventListener("click", gridBtnClick);
-  const colorBtn = document.getElementById("color");
-  colorBtn.addEventListener("click", colorBtnClick);
 
-  // Helper Functions to update HTML with current state info
-  function updateGen() {
-    document.getElementById("generation").innerHTML = generation;
-  }
-  function updateAlive() {
-    // update HTML with current number of alive cells
-    document.getElementById("alive").innerHTML = alive;
-  }
-  function updateSpeed() {
-    document.getElementById("speed").innerHTML = speedDisplay;
-  }
-  function updateSize() {
-    document.getElementById("size").innerHTML = size + "x" + size;
-  }
-  function updateColor() {
-    let span = document.getElementById("colors");
-    if (displayColor) {
-      span.innerHTML = "ON";
-      span.style.color = "green";
-    }
-    if (!displayColor) {
-      span.innerHTML = "OFF";
-      span.style.color = "red";
-    }
-  }
-  // initialize empty array to store our 2d array for the grid
-  let grid = [];
+  let grid = new Array(cols);
+  let nextGrid = new Array(cols);
 
-  function clearArray() {
-    grid = [];
-  }
-  // Create 2d Array to store grid [[col,row],[...]..]
-  function buildArray() {
-    rows = size;
-    cols = size;
-    grid = new Array(cols);
+  function createArrs() {
     for (let i = 0; i < cols; i++) {
-      grid[i] = new Array(rows).fill(0);
+      grid[i] = new Array(rows);
+      nextGrid[i] = new Array(rows);
     }
   }
 
-  // Initialize col x row size grid
-  createGrid();
-  function createGrid() {
-    buildArray();
-    generation = 0;
-    document.querySelector("span").innerHTML = generation;
-    const gridContainer = document.querySelector(".grid-container");
-    gridContainer.innerHTML = "";
-    // loop through each column
+  function resetArrs() {
     for (let col = 0; col < cols; col++) {
-      // create new container div for each column
-      let divRow = document.createElement("div");
-      divRow.classList.add("div-row");
-      // loop through each row
       for (let row = 0; row < rows; row++) {
-        const cell = document.createElement("div");
-        // add preset pattern if selected
-        if (PRESET_GLIDER) {
-          if (gliderArray[col][row] == 1) {
-            cell.setAttribute("id", row + "-" + col);
-            cell.classList.add("alive");
-            cell.addEventListener("click", (evt) => cellClick(cell));
-            // add each new cell to divRow
-            divRow.appendChild(cell);
-            grid[col][row] = 1;
-          } else if (gliderArray[col][row] == 0) {
-            // create id for cell with col-row acting liky [x][y] coordinates on the grid
-            cell.setAttribute("id", row + "-" + col);
-            cell.classList.add("dead");
-            cell.addEventListener("click", (evt) => cellClick(cell));
-            // add each new cell to divRow
-            divRow.appendChild(cell);
-          }
-        } else if (PRESET_FIGURE) {
-          if (figureEightArray[col][row] == 1) {
-            cell.setAttribute("id", row + "-" + col);
-            cell.classList.add("alive");
-            cell.addEventListener("click", (evt) => cellClick(cell));
-            // add each new cell to divRow
-            divRow.appendChild(cell);
-            grid[col][row] = 1;
-          } else if (figureEightArray[col][row] == 0) {
-            // create id for cell with col-row acting liky [x][y] coordinates on the grid
-            cell.setAttribute("id", row + "-" + col);
-            cell.classList.add("dead");
-            cell.addEventListener("click", (evt) => cellClick(cell));
-            // add each new cell to divRow
-            divRow.appendChild(cell);
-          }
-          // Normal empty grid, no preset selected
+        grid[col][row] = 0;
+        nextGrid[col][row] = 0;
+      }
+    }
+  }
+
+  function nextArrs() {
+    for (let col = 0; col < cols; col++) {
+      for (let row = 0; row < rows; row++) {
+        grid[col][row] = nextGrid[col][row];
+        nextGrid[col][row] = 0;
+      }
+    }
+  }
+
+  // Initialize
+  function initGame() {
+    createGrid();
+    createArrs();
+    resetArrs();
+    initBtns();
+  }
+
+  function createGrid() {
+    // let newGrid = grid.fill(new Array(rows.fill(0)));
+    const table = document.createElement("table");
+    for (let col = 0; col < cols; col++) {
+      let tRow = document.createElement("tr");
+      for (let row = 0; row < rows; row++) {
+        const tData = document.createElement("td");
+        tData.setAttribute("id", row + "-" + col);
+        tData.classList.add("dead");
+        tData.addEventListener("click", (e) => click(tData));
+        tRow.appendChild(tData);
+      }
+      table.appendChild(tRow);
+    }
+    container.appendChild(table);
+  }
+
+  function click(tData) {
+    if (running) return;
+    const curId = tData.id.split("-");
+    // let col, row;
+    [col, row] = [curId[0], curId[1]];
+    if (tData.classList.contains("dead")) {
+      tData.setAttribute("class", "alive");
+      grid[col][row] = 1;
+    } else {
+      tData.setAttribute("class", "dead");
+      grid[col][row] = 0;
+    }
+  }
+
+  function updateClasses() {
+    for (let col = 0; col < cols; col++) {
+      for (let row = 0; row < rows; row++) {
+        var tData = document.getElementById(col + "-" + row);
+        if (grid[col][row] == 1) {
+          tData.setAttribute("class", "alive");
         } else {
-          // create id for cell with col-row acting liky [x][y] coordinates on the grid
-          cell.setAttribute("id", row + "-" + col);
-          cell.classList.add("dead");
-          cell.addEventListener("click", (evt) => cellClick(cell));
-          // add each new cell to divRow
-          divRow.appendChild(cell);
+          tData.setAttribute("class", "dead");
         }
       }
-      // add each divRow to the grid container div
-      gridContainer.appendChild(divRow);
     }
-    PRESET_GLIDER = false;
-    PRESET_FIGURE = false;
   }
 
-  function cellClick(cell) {
-    //  do not allow cell to be changed if currently running
-    if (running) return;
-    // get current id and split into [[col], [row]]
-    const curId = cell.id.split("-");
-    // destructure col and row from cell id
-    let [col, row] = [curId[0], curId[1]];
-    // if dead make alive
-    if (cell.classList.contains("dead")) {
-      cell.setAttribute("class", "alive");
-      grid[col][row] = 1;
-      alive++;
-      updateAlive();
-    } else {
-      // if alive make dead
-      cell.setAttribute("class", "dead");
-      grid[col][row] = 0;
-      alive--;
-      updateAlive();
-    }
+  function initBtns() {
+    // const startBtn = document.getElementById("start-stop");
+    startBtn.addEventListener("click", startBtnClick);
+    const stepBtn = document.getElementById("step");
+    stepBtn.addEventListener("click", stepBtnClick);
+    const randomBtn = document.getElementById("random");
+    randomBtn.addEventListener("click", randomBtnClick);
   }
 
   function startBtnClick() {
@@ -179,279 +113,102 @@ document.addEventListener("DOMContentLoaded", () => {
       startBtn.innerHTML = "Stop";
       start();
     } else {
-      // stop the game
-      stop();
+      running = false;
+      startBtn.innerHTML = "Start";
+      clearTimeout(timer);
     }
   }
 
-  // start recursive loop of generations x speed/ms until user stops
+  function stepBtnClick() {
+    if (running) {
+      running = false;
+      //   document.getElementById("start-stop").innerHTML = "Start";
+      startBtn.innerHTML = "Start";
+      clearTimeout(timer);
+      step();
+    } else {
+      step();
+    }
+  }
+  // TODO update!
+  function randomBtnClick() {}
+
+  /*
+---Actions
+*/
+  // move game forward one step
+  function step() {
+    generation++;
+    if (running) running = false;
+    nextGen();
+  }
+
   function start() {
     generation++;
     nextGen();
     if (running) {
-      update = setTimeout(start, speed);
-    }
-  }
-  // stop the game
-  function stop() {
-    running = false;
-    startBtn.innerHTML = "Start";
-    clearTimeout(update);
-  }
-
-  function stepBtnClick() {
-    // if running stop, then step
-    if (running) {
-      stop();
-      generation++;
-      nextGen();
-    } else {
-      // step 1 generation
-      generation++;
-      nextGen();
+      timer = setTimeout(start, speed);
     }
   }
 
-  // add random 0/1 values to all cells on grid
-  function randomBtnClick() {
-    if (running) stop();
-    colorGeneration = 0;
-    for (let col = 0; col < cols; col++) {
-      for (let row = 0; row < rows; row++) {
-        if (Math.random() + 0.25 > 1) {
-          // add 25% random cells
-          grid[col][row] = 1;
-          document
-            .getElementById(col + "-" + row)
-            .setAttribute("class", "alive");
-          alive++;
-        }
-      }
-    }
-  }
-
-  function slowerBtnClick() {
-    if (speed < 3500) {
-      speed = Math.floor(speed / 0.75);
-    }
-    if (speedDisplay > 1) {
-      speedDisplay--;
-      updateSpeed();
-    }
-  }
-
-  function fasterBtnClick() {
-    if (speed > 50) {
-      speed = Math.floor(speed / 1.5);
-    }
-    if (speedDisplay < 10) {
-      speedDisplay++;
-      updateSpeed();
-    }
-  }
-
-  // resest grid, generation, num alive
-  function resetBtnClick() {
-    if (running) stop();
-    colorGeneration = 0;
-    const aliveCells = document.getElementsByClassName("alive");
-    const cellsToUpdate = [];
-    for (let i = 0; i < cellsToUpdate.length; i++) {
-      cellsToUpdate.push(aliveCells[i]);
-    }
-    for (var i = 0; i < cellsToUpdate.length; i++) {
-      cellsToUpdate[i].setAttribute("class", "dead");
-    }
-    for (var i = 0; i < rows; i++) {
-      for (var j = 0; j < cols; j++) {
-        grid[i][j] = 0;
-      }
-    }
-    buildArray();
-    createGrid();
-    if (showGrid == false) {
-      showGrid = true;
-      gridBtnClick();
-    }
-    alive = 0;
-    updateAlive();
-  }
-
-  // Decrease cols x rows -10
-  function smallerBtnClick() {
-    if (size >= 20) {
-      size -= 10;
-      stop();
-      clearArray();
-      colorGeneration = 0;
-      buildArray();
-      createGrid();
-      updateSize();
-      alive = 0;
-      updateAlive();
-      showGrid = true;
-    }
-  }
-  // Increase cols and rows +10
-  function biggerBtnClick() {
-    if (size <= 90) {
-      size += 10;
-      stop();
-      clearArray();
-      colorGeneration = 0;
-      buildArray();
-      createGrid();
-      updateSize();
-      alive = 0;
-      updateAlive();
-      showGrid = true;
-    }
-  }
-
-  // Toggle Grid Lines
-  function gridBtnClick(evt) {
-    for (let col = 0; col < cols; col++) {
-      for (let row = 0; row < rows; row++) {
-        const cell = document.getElementById(row + "-" + col);
-        if (showGrid) {
-          cell.style.border = "0";
-        } else {
-          cell.style.border = "0.2px solid black";
-        }
-      }
-    }
-    showGrid = !showGrid;
-    if (showGrid) {
-      document.querySelector(".grid-container").style.border = "0";
-    } else {
-      document.querySelector(".grid-container").style.border =
-        "0.01px solid black";
-    }
-  }
-
-  // toggle cell color change every 5 generations
-  function colorBtnClick() {
-    if (displayColor) {
-      displayColor = false;
-    } else {
-      displayColor = true;
-    }
-    updateColor(); // html helper
-  }
-
-  // calculate the next grid based on the rules of the game
   function nextGen() {
-    // reset number of alive cells to zero
-    alive = 0;
-    // make exact copy of current grid (2d array[][])
-    const nextGrid = grid.map((arr) => [...arr]);
-    // loop over every cell in grid
     for (let col = 0; col < cols; col++) {
       for (let row = 0; row < rows; row++) {
-        const cell = grid[col][row];
-        // start count number of neighbors for each cell
-        let neighbors = 0;
-        // loop through a 9x9 grid around each cell (-1, 0, 1)
-        //
-        // -1,-1 | 0,-1 | 1,-1
-        // -1, 0 | 0, 0 | 1, 0
-        // -1, 1 | 0, 1 | 1, 1
-        //
-        for (let x = -1; x < 2; x++) {
-          for (let y = -1; y < 2; y++) {
-            // set variables for current cell and the x,y positions checking on 9x9 grid
-            const curX = col + x;
-            const curY = row + y;
-            if (x == 0 && y == 0) continue;
-            // if not out of bounds of the overall grid (excluding edges as dead zones)
-            if (curX >= 0 && curX < cols && curY >= 0 && curY < rows) {
-              // check and count current neighbor
-              if (grid[curX][curY]) neighbors++;
-            }
-          }
-        } // end neighbor count
-        // apply game rules to each cell and modify nextGrid (copy grid)
-        // if cell is alive and neighbors < 2 or > 3 the cell dies
-        if ((cell == 1 && neighbors < 2) || neighbors > 3)
-          nextGrid[col][row] = 0;
-        // if cell is alive and neighbors == 2 or == 3 the cell stays alive
-        if ((cell == 1 && neighbors == 2) || neighbors == 3)
-          nextGrid[col][row] = 1;
-        // if cell is dead and neighbors == 3 --> cell becomes alive next gen
-        else if (cell == 0 && neighbors == 3) nextGrid[col][row] = 1;
-        // otherwise cell stays dead - do nothing
-      }
-    } // nextGrid is ready to go
-
-    // Final step is to take nextGrid and copy it back
-    //  to grid and update the cell classes
-    for (let col = 0; col < cols; col++) {
-      for (let row = 0; row < rows; row++) {
-        grid[col][row] = nextGrid[col][row];
-        let cell = document.getElementById(col + "-" + row);
-        if (nextGrid[col][row] == 1) {
-          cell.setAttribute("class", "alive");
-          cell.style.background = "black";
-          if (displayColor) {
-            if (generation > colorGeneration + 5) {
-              cell.style.background = colorArray[colorGeneration];
-            }
-          }
-          alive++;
-        } else if (nextGrid[col][row] == 0) {
-          cell.setAttribute("class", "dead");
-          cell.style.background = "white";
-          if (displayColor) {
-            if (generation > colorGeneration + 5) {
-              cell.style.background = "white";
-            }
-          }
-        }
+        applyRules(col, row);
+        // update generation number HTML
+        generationDisplay.innerHTML = generation;
       }
     }
-    // continue to iterate the colorArray
-    if (displayColor) {
-      if (generation > colorGeneration + 10) {
-        colorGeneration += 5;
-        if (colorGeneration > 270) colorGeneration = 0;
-      }
-    }
-    // update HTML elements for generation and number of alive cells
-    updateGen();
-    updateAlive();
+    // copy nextGrid to grid, and reset nextGrid
+    nextArrs();
+    // update all 1 values to have class "alive"
+    updateClasses();
   }
 
-  // Preset grid button handlers
-  // Glider
-  function gliderBtnClick() {
-    if (!running) {
-      resetBtnClick();
-      //   displayColor = false;
-      //   updateColor();
-      colorGeneration = 3;
-      PRESET_GLIDER = true;
-      buildArray();
-      createGrid();
-      if (showGrid == false) {
-        showGrid = true;
-        gridBtnClick();
-      }
-    }
+  function applyRules(col, row) {
+    let neighbors = countNeighbors(col, row);
+    // apply game rules to each cell to create nextGrid/generation
+    // if neighbors < 2 or > 3 the cell dies
+    if (grid[col][row] == 1) {
+      neighbors < 2 || neighbors > 3
+        ? (nextGrid[col][row] = 0)
+        : (nextGrid[col][row] = 1);
+    } else if (grid[col][row] == 0 && neighbors == 3) nextGrid[col][row] = 1;
+
+    // if cell is dead and neighbors = 3 the cell becomes alive
+
+    // otherwise cell does not change - do nothing
   }
-  // Figure 8
-  function figureBtnClick() {
-    if (!running) {
-      resetBtnClick();
-      //   displayColor = false;
-      //   updateColor();
-      colorGeneration = 2;
-      PRESET_FIGURE = true;
-      buildArray();
-      createGrid();
-      if (showGrid == false) {
-        showGrid = true;
-        gridBtnClick();
-      }
+
+  function countNeighbors(col, row) {
+    let neighbors = 0;
+    if (col - 1 >= 0) {
+      if (grid[col - 1][row] == 1) neighbors++;
     }
+    if (col - 1 >= 0 && row - 1 >= 0) {
+      if (grid[col - 1][row - 1] == 1) neighbors++;
+    }
+    if (col - 1 >= 0 && row + 1 < rows) {
+      if (grid[col - 1][row + 1] == 1) neighbors++;
+    }
+    if (col - 1 >= 0) {
+      if (grid[col][row - 1] == 1) neighbors++;
+    }
+    if (col + 1 < cols) {
+      if (grid[col][row + 1] == 1) neighbors++;
+    }
+    if (col + 1 < rows) {
+      if (grid[col + 1][row] == 1) neighbors++;
+    }
+    if (col + 1 < cols && row - 1 >= 0) {
+      if (grid[col + 1][row - 1] == 1) neighbors++;
+    }
+    if (col + 1 < cols && row + 1 < rows) {
+      if (grid[col + 1][row + 1] == 1) neighbors++;
+    }
+    return neighbors;
   }
+
+  // start game of life!
+  initGame();
 });
